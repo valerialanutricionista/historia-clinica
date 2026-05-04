@@ -1,0 +1,43 @@
+name: supabase-keepalive
+
+# Mantiene el proyecto Supabase Free despierto haciendo un request al REST
+# API cada hora. Sin esto, Supabase pausa el proyecto a los ~7 días de
+# inactividad y la app deja de responder hasta que alguien la despause manual.
+
+on:
+  schedule:
+    # Cada hora, minuto 0. Cron en UTC.
+    - cron: "0 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping Supabase REST
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::faltan secrets SUPABASE_URL / SUPABASE_ANON_KEY"
+            exit 1
+          fi
+
+          # GET a /rest/v1/pacientes?select=id&limit=1
+          # RLS va a devolver [] (anon no autenticado), pero el request
+          # impacta el API gateway -> cuenta como actividad para Supabase.
+          status=$(curl -sS -o /tmp/body -w '%{http_code}' \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            "${SUPABASE_URL}/rest/v1/pacientes?select=id&limit=1")
+
+          echo "HTTP ${status}"
+          # 200 = OK, 401 = key inválida, 404 = URL mala, 5xx = supabase down
+          if [ "$status" != "200" ]; then
+            echo "::error::respuesta inesperada (status=${status})"
+            cat /tmp/body
+            exit 1
+          fi
+          echo "OK — proyecto Supabase activo"

@@ -1,0 +1,32 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+
+# Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Asistentes IA — config local de cada dev, no se commitea.
+# Las skills se reinstalan con: DISABLE_TELEMETRY=1 npx skills@latest add supabase/agent-skills -a claude-code -y
+.claude/
+
+# Node (por si alguien instala algo accidentalmente)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Variables y secretos — defensa en profundidad
+# El vault real vive en ../.vault/ fuera de este repo, pero bloqueamos
+# acá cualquier secreto que se cuele por error.
+.env
+.env.*
+.envrc
+.vault/
+secrets.env
+*.pem
+*.key
+service_role*
