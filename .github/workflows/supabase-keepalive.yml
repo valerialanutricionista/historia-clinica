@@ -1,13 +1,16 @@
 name: supabase-keepalive
 
 # Mantiene el proyecto Supabase Free despierto haciendo un request al REST
-# API cada hora. Sin esto, Supabase pausa el proyecto a los ~7 días de
-# inactividad y la app deja de responder hasta que alguien la despause manual.
+# API una vez por día. Sin esto, Supabase pausa el proyecto a los ~7 días
+# de inactividad y la app deja de responder hasta que alguien la despause
+# manual. Cada 24h da margen de 7x sobre la ventana de pausa.
 
 on:
   schedule:
-    # Cada hora, minuto 0. Cron en UTC.
-    - cron: "0 * * * *"
+    # 12:17 UTC (= 09:17 ART) todos los días. Se elige un minuto no-cero
+    # porque GitHub Actions delay-ea schedules disparados en :00 (cluster
+    # de jobs de toda la plataforma).
+    - cron: "17 12 * * *"
   workflow_dispatch: {}
 
 jobs:

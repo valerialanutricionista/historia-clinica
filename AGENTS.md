@@ -146,7 +146,7 @@ PGPASSWORD="$SUPABASE_DB_PASSWORD" psql \
 
 ## Keepalive del proyecto Supabase
 
-Plan Free pausa proyectos con ~7 días sin tráfico. Para evitarlo hay un GitHub Action en `.github/workflows/supabase-keepalive.yml` que cada hora hace un `GET` al REST API con la `anon key`. Eso cuenta como actividad y mantiene el proyecto despierto.
+Plan Free pausa proyectos con ~7 días sin tráfico. Para evitarlo hay un GitHub Action en `.github/workflows/supabase-keepalive.yml` que una vez por día (12:17 UTC) hace un `GET` al REST API con la `anon key`. Eso cuenta como actividad y mantiene el proyecto despierto. Cadencia diaria = 7x de margen sobre la ventana de pausa.
 
 Requiere 2 secrets en el repo (Settings → Secrets and variables → Actions):
 - `SUPABASE_URL` — la URL pública del proyecto.
