@@ -84,7 +84,8 @@ function mostrarApp() {
   cargarPacientes();
 }
 
-$("#btn-login").addEventListener("click", async () => {
+$("#form-login").addEventListener("submit", async (e) => {
+  e.preventDefault();
   const email = $("#login-email").value.trim();
   const pass = $("#login-pass").value;
   const errEl = $("#login-error");
@@ -104,11 +105,6 @@ $("#btn-login").addEventListener("click", async () => {
   }
   usuarioActual = data.user;
   mostrarApp();
-});
-
-// Permitir Enter para login
-$("#login-pass").addEventListener("keydown", e => {
-  if (e.key === "Enter") $("#btn-login").click();
 });
 
 $("#btn-logout").addEventListener("click", async () => {
